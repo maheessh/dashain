@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashain Fun Certificate Voting</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@500;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* Custom styles for a festive feel */
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Teko', sans-serif;
+            letter-spacing: 1px;
+        }
+
+        /* Custom animation for the decorative lights */
+        @keyframes glowing-lights {
+            0%, 100% { box-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+            50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+        }
+
+        .light {
+            animation: glowing-lights 2s infinite ease-in-out;
+        }
+        
+        .light:nth-child(2) { animation-delay: 0.2s; }
+        .light:nth-child(3) { animation-delay: 0.4s; }
+        .light:nth-child(4) { animation-delay: 0.6s; }
+        .light:nth-child(5) { animation-delay: 0.8s; }
+        .light:nth-child(6) { animation-delay: 1.0s; }
+        .light:nth-child(7) { animation-delay: 1.2s; }
+
+
+        /* Custom toast notification styles */
+        #toast-notification {
+            transition: opacity 0.3s, transform 0.3s;
+        }
+        
+        /* Custom loader styles */
+        #loader-overlay {
+            transition: opacity 0.3s;
+        }
+        .loader-spinner {
+            border-top-color: #c53030; /* red-700 */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-orange-50">
+
+    <!-- Background Decoration -->
+    <div class="absolute inset-0 z-0 overflow-hidden">
+        <div class="absolute -top-32 -left-32 w-96 h-96 bg-red-200 rounded-full opacity-50 mix-blend-multiply filter blur-2xl animate-blob"></div>
+        <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-yellow-200 rounded-full opacity-50 mix-blend-multiply filter blur-2xl animate-blob animation-delay-4000"></div>
+        <div class="absolute -bottom-32 -left-16 w-80 h-80 bg-orange-200 rounded-full opacity-50 mix-blend-multiply filter blur-2xl animate-blob animation-delay-2000"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="relative min-h-screen flex flex-col items-center justify-center p-4 sm:p-6 lg:p-8">
+
+        <!-- Decorative Lights Header -->
+        <div class="w-full max-w-4xl mx-auto mb-4">
+            <div class="flex justify-center space-x-2 sm:space-x-4">
+                <span class="light w-3 h-3 sm:w-4 sm:h-4 rounded-full" style="background-color: #f59e0b; color: #f59e0b;"></span>
+                <span class="light w-3 h-3 sm:w-4 sm:h-4 rounded-full" style="background-color: #ef4444; color: #ef4444;"></span>
+                <span class="light w-3 h-3 sm:w-4 sm:h-4 rounded-full" style="background-color: #10b981; color: #10b981;"></span>
+                <span class="light w-3 h-3 sm:w-4 sm:h-4 rounded-full" style="background-color: #f59e0b; color: #f59e0b;"></span>
+                <span class="light w-3 h-3 sm:w-4 sm:h-4 rounded-full" style="background-color: #ef4444; color: #ef4444;"></span>
+                <span class="light w-3 h-3 sm:w-4 sm:h-4 rounded-full" style="background-color: #10b981; color: #10b981;"></span>
+                 <span class="light w-3 h-3 sm:w-4 sm:h-4 rounded-full" style="background-color: #f59e0b; color: #f59e0b;"></span>
+            </div>
+        </div>
+
+        <!-- Main Content Wrapper -->
+        <div class="w-full max-w-4xl mx-auto bg-white/70 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/50 overflow-hidden">
+            <div class="grid md:grid-cols-5">
+
+                <!-- Left Panel: Voting Form -->
+                <div class="md:col-span-2 p-8 bg-white">
+                    <h2 class="text-5xl font-bold text-red-800 drop-shadow-md mb-2 text-center">
+                        VOTE NOW!
+                    </h2>
+                    <p class="text-center text-gray-600 mb-8">Choose your favorite for the Dashain Fun Awards! 🪔</p>
+
+                    <form id="votingForm" class="space-y-5">
+                        <div>
+                            <label for="voteEmail" class="block text-gray-700 font-semibold mb-2 text-sm">Your Email</label>
+                            <input type="email" id="voteEmail" required
+                                class="w-full p-3 bg-gray-50 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 focus:outline-none transition"
+                                placeholder="john.doe@example.com">
+                        </div>
+
+                        <div>
+                            <label for="voteCategory" class="block text-gray-700 font-semibold mb-2 text-sm">Award Category</label>
+                            <select id="voteCategory" required
+                                class="w-full p-3 bg-gray-50 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 focus:outline-none transition">
+                                <option value="" disabled selected>-- Select an award --</option>
+                                <option>Best Cook Award 🧑‍🍳</option>
+                                <option>Best Sleeper of the Semester 😴</option>
+                                <option>Most Invisible Person 👻</option>
+                                <option>Best Guffadi (Talkative) Award 🗣️</option>
+                                <option>Dashain Fashion Icon 💃</option>
+                            </select>
+                        </div>
+
+                        <div>
+                            <label for="voteName" class="block text-gray-700 font-semibold mb-2 text-sm">Vote For</label>
+                            <input type="text" id="voteName" required
+                                class="w-full p-3 bg-gray-50 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-red-400 focus:border-red-400 focus:outline-none transition"
+                                placeholder="Enter their name">
+                        </div>
+
+                        <button type="submit"
+                            class="w-full bg-gradient-to-r from-red-600 to-orange-500 hover:from-red-700 hover:to-orange-600 text-white font-semibold text-lg py-3 px-4 rounded-xl shadow-lg transform hover:-translate-y-1 transition duration-300 ease-in-out flex items-center justify-center space-x-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+                            <span>Cast My Vote</span>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Right Panel: Results -->
+                <div class="md:col-span-3 p-8 bg-red-50/50">
+                    <h3 class="text-4xl font-bold text-green-800 mb-6 text-center">📊 Live Results</h3>
+                    <div id="resultsContainer" class="space-y-6 max-h-[60vh] overflow-y-auto pr-2">
+                         <!-- Results will be dynamically inserted here -->
+                         <p id="no-results-msg" class="text-center text-gray-500 mt-10">No votes yet. Be the first!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+         <!-- Footer -->
+        <footer class="text-center mt-6 text-gray-500 text-sm">
+            <p>Happy Dashain! ✨</p>
+        </footer>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast-notification" class="fixed top-5 right-5 z-[10000] p-4 rounded-lg shadow-lg text-white opacity-0 transform translate-y-2 pointer-events-none">
+        <p id="toast-message"></p>
+    </div>
+
+    <!-- Loader Overlay -->
+    <div id="loader-overlay" class="fixed inset-0 bg-black/30 z-[9999] flex items-center justify-center opacity-0 pointer-events-none">
+        <div class="loader-spinner w-12 h-12 border-4 border-gray-200 rounded-full"></div>
+    </div>
+
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const votingForm = document.getElementById('votingForm');
+            const resultsContainer = document.getElementById('resultsContainer');
+            const noResultsMsg = document.getElementById('no-results-msg');
+            const toast = document.getElementById('toast-notification');
+            const toastMessage = document.getElementById('toast-message');
+            const loader = document.getElementById('loader-overlay');
+
+            // IMPORTANT: Replace this with YOUR Google Apps Script Web App URL.
+            // You will get this URL after deploying the 'google_apps_script.gs' file.
+            const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwSWKXl5BQWUd5spU2XZw76uOMYOiWkKOSteSPPYTg5h8D8O8Y0w-r-Hdgyktz_m3gb/exec";
+
+            // --- UI Helper Functions ---
+
+            function showToast(message, type = 'success') {
+                toastMessage.textContent = message;
+                toast.className = `fixed top-5 right-5 z-[10000] p-4 rounded-lg shadow-lg text-white transform pointer-events-none ${type === 'success' ? 'bg-green-500' : 'bg-red-500'} opacity-100 translate-y-0`;
+                
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px)';
+                }, 3000);
+            }
+
+            function showLoader(isLoading) {
+                if (isLoading) {
+                    loader.classList.remove('opacity-0', 'pointer-events-none');
+                    loader.classList.add('opacity-100');
+                } else {
+                    loader.classList.remove('opacity-100');
+                    loader.classList.add('opacity-0', 'pointer-events-none');
+                }
+            }
+
+            // --- Voting Logic ---
+            
+            votingForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                showLoader(true);
+
+                const vote = {
+                    email: document.getElementById('voteEmail').value,
+                    category: document.getElementById('voteCategory').value,
+                    name: document.getElementById('voteName').value.trim()
+                };
+
+                // **FIXED FETCH CALL for submitting votes**
+                // This method is more reliable with Google Apps Script to avoid CORS issues.
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: "POST",
+                    body: JSON.stringify(vote),
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        triggerCelebration();
+                        showToast(`Vote for ${vote.name} recorded!`, 'success');
+                        votingForm.reset();
+                        loadResults(); // Refresh results immediately
+                    } else {
+                        // Show error from Google Script if any
+                        throw new Error(data.message || 'Unknown error from server');
+                    }
+                })
+                .catch(err => {
+                    console.error("Error submitting vote:", err);
+                    showToast(err.message || "Error recording vote. Please try again.", 'error');
+                })
+                .finally(() => {
+                    showLoader(false);
+                });
+            });
+
+            // --- Results Display Logic ---
+
+            function loadResults() {
+                showLoader(true);
+                // The GET request for reading results is generally fine.
+                fetch(GOOGLE_SCRIPT_URL + "?action=read")
+                .then(res => res.json())
+                .then(data => {
+                     // Check if data is an array before proceeding
+                    if (Array.isArray(data) && data.length > 0) {
+                        noResultsMsg.style.display = 'none';
+                        displayResults(data);
+                    } else {
+                         noResultsMsg.style.display = 'block';
+                         resultsContainer.innerHTML = ''; // Clear previous results
+                         resultsContainer.appendChild(noResultsMsg);
+                    }
+                })
+                .catch(err => {
+                     console.error("Error loading results:", err);
+                     showToast("Could not load results.", 'error');
+                })
+                .finally(() => {
+                    showLoader(false);
+                });
+            }
+
+            function displayResults(data) {
+                resultsContainer.innerHTML = ''; // Clear previous results
+
+                const grouped = data.reduce((acc, vote) => {
+                    if (vote.category && vote.name) { // Ensure data is valid
+                        if (!acc[vote.category]) acc[vote.category] = {};
+                        const trimmedName = vote.name.trim();
+                        acc[vote.category][trimmedName] = (acc[vote.category][trimmedName] || 0) + 1;
+                    }
+                    return acc;
+                }, {});
+
+                for (const category in grouped) {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'bg-white/80 p-4 rounded-xl shadow-md';
+                    
+                    const categoryHeader = document.createElement('h4');
+                    categoryHeader.className = 'text-xl font-bold text-red-700 mb-3';
+                    categoryHeader.textContent = category;
+                    categoryDiv.appendChild(categoryHeader);
+                    
+                    const sortedPeople = Object.entries(grouped[category]).sort((a, b) => b[1] - a[1]);
+                    const totalVotesInCategory = sortedPeople.reduce((sum, [, votes]) => sum + votes, 0);
+
+                    sortedPeople.forEach(([person, votes], index) => {
+                        const percentage = totalVotesInCategory > 0 ? (votes / totalVotesInCategory) * 100 : 0;
+                        const personDiv = document.createElement('div');
+                        personDiv.className = 'mb-2';
+                        
+                        personDiv.innerHTML = `
+                            <div class="flex justify-between items-center text-sm mb-1">
+                                <span class="font-semibold text-gray-800">${index === 0 ? '🏆' : ''} ${person}</span>
+                                <span class="font-bold text-green-700">${votes} ${votes > 1 ? 'votes' : 'vote'}</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                <div class="bg-gradient-to-r from-green-400 to-blue-500 h-2.5 rounded-full" style="width: ${percentage}%"></div>
+                            </div>
+                        `;
+                        categoryDiv.appendChild(personDiv);
+                    });
+                    resultsContainer.appendChild(categoryDiv);
+                }
+            }
+
+            // --- Fun Effects ---
+
+            function triggerCelebration() {
+                const duration = 2 * 1000;
+                const animationEnd = Date.now() + duration;
+                const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 10000 };
+
+                function randomInRange(min, max) {
+                    return Math.random() * (max - min) + min;
+                }
+
+                const interval = setInterval(function() {
+                    const timeLeft = animationEnd - Date.now();
+                    if (timeLeft <= 0) return clearInterval(interval);
+
+                    const particleCount = 50 * (timeLeft / duration);
+                    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                    confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+                }, 250);
+            }
+
+            // --- Initial Load ---
+            loadResults();
+        });
+    </script>
+</body>
+</html>
+
